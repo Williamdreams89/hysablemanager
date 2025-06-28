@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title></title>
+    <style>
+
+
+      .man_cardd{
+        z-index: -90;
+        background-color: white;
+opacity: 0.3;
+background: radial-gradient(circle, transparent 20%, white 20%, white 80%, transparent 80%, transparent), radial-gradient(circle, transparent 20%, white 20%, white 80%, transparent 80%, transparent) 25px 25px, linear-gradient(#ababad 2px, transparent 2px) 0 -1px, linear-gradient(90deg, #ababad 2px, white 2px) -1px 0;
+background-size: 50px 50px, 50px 50px, 25px 25px, 25px 25px;
+      }
+      .session_switcher{
+        position: relative;
+      }
+      .session_switcher small{
+        font-size: 10px;
+        width: fit-content;
+      }
+
+      .session_switcher .divider{
+        position: absolute;
+        width: 190px;
+        top: 50%;
+        /* left:5% */
+      }
+      .session_switcher .divider-two{
+        position: absolute;
+        height: 50px;
+      }
+
+      a{
+        color: rgb(34, 33, 33);
+        text-decoration: none;
+      }
+      .p-datatable .p-datatable-tbody > tr > td {
+  vertical-align: top !important;
+}
+
+.p-dialog {
+  z-index: 10000 !important;
+}
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

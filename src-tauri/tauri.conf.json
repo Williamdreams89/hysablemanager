@@ -1,0 +1,45 @@
+{
+  "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
+  "productName": "Sukuuni ERP",
+  "version": "0.1.0",
+  "identifier": "com.saasy.sukuuni",
+  "build": {
+    "frontendDist": "../dist",
+    "devUrl": "http://localhost:5173",
+    "beforeDevCommand": "yarn dev",
+    "beforeBuildCommand": "yarn build"
+  },
+  "plugins": {
+    "updater": {
+      "endpoints": ["https://github.com/Williamdreams89/sukuunierp/releases/latest/download/latest.json"]
+    } 
+  },
+  "app": {
+    "windows": [
+      {
+        "title": "Sukuuni ERP",
+        "width": 800,
+        "height": 600,
+        "resizable": true,
+        "fullscreen": false
+      }
+    ],
+    "security": {
+      "csp": null
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": "all",
+    "icon": [
+    "icons/edsaas.ico",
+    "icons/edsaas.icns",
+    "icons/edsaas_16x16.png",
+    "icons/edsaas_32x32.png",
+    "icons/edsaas_128x128.png",
+    "icons/edsaas_256x256.png",
+    "icons/edsaas_512x512.png",
+    "icons/edsaas_1024x1024.png"
+  ]
+  }
+}
