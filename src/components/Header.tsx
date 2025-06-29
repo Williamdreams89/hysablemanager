@@ -9,11 +9,10 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import Search from './Search';
 import NavLogoDisplay from './NavLogoDisplay';
 import { NavLink } from 'react-router-dom';
-import { Props } from './people/students/types';
 
 
 
-const Header: React.FC<Props> = ({SystemSettingData, academicSessionSettingsData, academicSettingsData}) => {
+const Header: React.FC = () => {
   return (
     <Stack
       direction="row"
@@ -28,7 +27,7 @@ const Header: React.FC<Props> = ({SystemSettingData, academicSessionSettingsData
       spacing={2}
     >
       {/* <NavbarBreadcrumbs /> */}
-      <NavLogoDisplay academicSessionSettingsData={academicSessionSettingsData} SystemSettingData = {SystemSettingData} academicSettingsData = {academicSettingsData}  />
+      <NavLogoDisplay   />
       <Stack direction="row" sx={{ gap: 1 }}>
         <Search />
         <CustomDatePicker />

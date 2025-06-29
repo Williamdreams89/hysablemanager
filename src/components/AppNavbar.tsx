@@ -64,9 +64,7 @@ export default function AppNavbar() {
             sx={{ justifyContent: 'center', mr: 'auto' }}
           >
             {/* <CustomIcon /> */}
-            <Typography variant="h4" component="h1" sx={{ color: 'text.primary' }}>
-              Hysable Logo
-            </Typography>
+            <img src="/images/logo.png" width={200} />
           </Stack>
           <ColorModeIconDropdown data-screenshot="" />
           <MenuButton aria-label="menu" onClick={toggleDrawer(true)}>

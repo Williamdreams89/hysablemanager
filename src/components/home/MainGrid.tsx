@@ -3,19 +3,93 @@ import Grid from '@mui/material/Grid2';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-import ChartStudentByResidence from './ChartStudentByResidence';
 // import CustomizedTreeView from './CustomizedTreeView';
-import CustomDataGrid from './CustomDataGrid';
-import HighlightedCard from '../HighlightedCard';
-import FeePaymentBarChart from './FeePaymentChart';
-import SessionsChart from './SessionsChart';
-import StatCard, { StatCardProps } from './StatCard';
-import IncomeExpenditureTable from './CustomDataGrid';
+import StatCard, {StatCardProps} from './StatCard';
 import { APIContext } from '../../utils/contexts/ReactContext';
 import NavBreadCrumbs from '../NavbarBreadcrumbs';
 import { Chart } from 'primereact/chart';
 import { ComposableMap, Geographies, Geography, Marker } from "react-simple-maps";
-import {Card} from 'primereact/card'
+import { Card } from 'primereact/card'
+import { DataTable } from 'primereact/datatable';
+import { Column } from 'primereact/column';
+import { Dropdown } from 'primereact/dropdown';
+import { Button } from 'primereact/button';
+import { InputText } from 'primereact/inputtext';
+import { FilterMatchMode } from 'primereact/api';
+
+interface Product {
+  name: string;
+  category: string;
+  quantitySold: number;
+  revenue: number;
+}
+
+const TopSellingProducts: React.FC = () => {
+  const [products, setProducts] = React.useState<Product[]>([
+    { name: 'Maize', category: 'Cereals', quantitySold: 540, revenue: 12400 },
+    { name: 'Rice', category: 'Cereals', quantitySold: 420, revenue: 11000 },
+    { name: 'Beans', category: 'Grains', quantitySold: 310, revenue: 9800 },
+    { name: 'Millet', category: 'Cereals', quantitySold: 200, revenue: 7500 },
+    { name: 'Sorghum', category: 'Grains', quantitySold: 150, revenue: 6300 },
+  ]);
+
+  const [globalFilter, setGlobalFilter] = React.useState('');
+  const [selectedCategory, setSelectedCategory] = React.useState<string | null>(null);
+  const categories = ['Cereals', 'Grains'];
+
+  const header = (
+    <div className="flex justify-between items-center mb-3">
+      <div className="flex gap-2">
+        <InputText
+          placeholder="Search..."
+          onInput={(e) => setGlobalFilter((e.target as HTMLInputElement).value)}
+          className="p-inputtext-sm"
+        />
+        <Dropdown
+          value={selectedCategory}
+          options={categories}
+          onChange={(e) => setSelectedCategory(e.value)}
+          placeholder="Filter by Category"
+          className="p-inputtext-sm"
+        />
+        <Button icon="pi pi-filter" label="Filter" className="p-button-sm p-button-secondary" />
+      </div>
+    </div>
+  );
+
+  const revenueTemplate = (rowData: Product) => `₵${rowData.revenue.toLocaleString()}`;
+  const quantityTemplate = (rowData: Product) => `${rowData.quantitySold} units`;
+
+  const filteredProducts = products.filter((product) => {
+    const matchesFilter = globalFilter
+      ? product.name.toLowerCase().includes(globalFilter.toLowerCase()) ||
+      product.category.toLowerCase().includes(globalFilter.toLowerCase())
+      : true;
+    const matchesCategory = selectedCategory ? product.category === selectedCategory : true;
+    return matchesFilter && matchesCategory;
+  });
+
+  return (
+    <Card title="Top Selling Products" style={{ marginTop: '2rem' }}>
+      <DataTable
+        value={filteredProducts}
+        paginator
+        rows={5}
+        header={header}
+        className="p-datatable-sm"
+        responsiveLayout="scroll"
+        emptyMessage="No products found."
+      >
+        <Column field="name" header="Product" sortable></Column>
+        <Column field="category" header="Category" sortable></Column>
+        <Column field="quantitySold" header="Quantity Sold" body={quantityTemplate} sortable></Column>
+        <Column field="revenue" header="Revenue" body={revenueTemplate} sortable></Column>
+      </DataTable>
+    </Card>
+  );
+};
+
+
 
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
@@ -231,29 +305,29 @@ export const SalesByLocation = () => {
           src="https://i0.wp.com/www.oat.co.uk/wp-content/uploads/2016/05/World_map_blank_without_borders-1.png?resize=600%2C334&ssl=1"
           alt="World Map"
           width="100%"
-          height = '60%'
+          height='60%'
           preview={false}
           imageStyle={{ borderRadius: '8px', objectFit: 'cover' }}
         />
       </div>
 
       {/* Sales Progress List */}
-      <div className="flex flex-col gap-3" style={{width: '100%'}}>
-        <div className="" style={{display: 'flex', flexDirection:'column', gap: '1.2rem', width: '100%'}}>
-        {salesData.map((item, idx) => (
-          <div style={{width: '100%', display: 'flex', flexDirection:'column', gap:'1.2rem'}} key={idx}>
-            <div style={{width: '100%',  backgroundColor:''}}>
-              <div className="text-sm text-gray-800 mb-1 font-medium" style={{}}>{item.city}</div>
-              <ProgressBar
-                value={item.value}
-                style={{ height: '8px', borderRadius: '8px', width:'100%' }}
-                color={getProgressColor(item.value)}
-                showValue={false} // removes % label
-              />
+      <div className="flex flex-col gap-3" style={{ width: '100%' }}>
+        <div className="" style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem', width: '100%' }}>
+          {salesData.map((item, idx) => (
+            <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '1.2rem' }} key={idx}>
+              <div style={{ width: '100%', backgroundColor: '' }}>
+                <div className="text-sm text-gray-800 mb-1 font-medium" style={{}}>{item.city}</div>
+                <ProgressBar
+                  value={item.value}
+                  style={{ height: '8px', borderRadius: '8px', width: '100%' }}
+                  color={getProgressColor(item.value)}
+                  showValue={false} // removes % label
+                />
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
       </div>
     </Card>
   );
@@ -280,6 +354,28 @@ const MainGrid: React.FC = () => {
   React.useEffect(() => {
     document.title = "Home"
   })
+
+  const chartData = {
+    labels: ["Target Achieved", "Remaining"],
+    datasets: [
+      {
+        data: [75, 25], // Update this dynamically if needed
+        backgroundColor: ["#42A5F5", "#E0E0E0"],
+        hoverBackgroundColor: ["#64B5F6", "#EEEEEE"],
+        borderWidth: 0,
+      },
+    ],
+  };
+
+  const chartOptions = {
+    cutout: "75%",
+    plugins: {
+      legend: {
+        display: false,
+      },
+    },
+  };
+
   return (
     <Box sx={{
       width: '100%', maxWidth: {
@@ -327,9 +423,9 @@ const MainGrid: React.FC = () => {
           </Grid>
           <Grid size={{ xs: 12, sm: 6, lg: 4 }}>
             <TotalSalesDoughnut />
+          </Grid>
         </Grid>
-        </Grid>
-        <Grid size={{ xs: 12, md: 6, lg: 12 }}>
+        {/* <Grid size={{ xs: 12, md: 6, lg: 12 }}>
           <h3 style={{ textAlign: 'center', marginBottom: '20px' }}>
             Monthly Finance Summary | 2025–2026
           </h3>
@@ -348,21 +444,14 @@ const MainGrid: React.FC = () => {
           </div>
 
 
-        </Grid>
+        </Grid> */}
       </Grid>
-      <Typography component="h2" variant="h6" sx={{ mb: 2 }}>
-        Incomes & Expenditures
-      </Typography>
+
       <Grid container spacing={2} columns={12}>
-        <Grid size={{ xs: 12, lg: 9 }}>
-          <IncomeExpenditureTable />
+        <Grid size={{ xs: 12, lg: 12 }}>
+          <TopSellingProducts />
         </Grid>
-        <Grid size={{ xs: 12, lg: 3 }}>
-          <Stack gap={2} direction={{ xs: 'column', sm: 'row', lg: 'column' }}>
-            {/* <CustomizedTreeView /> */}
-            <ChartStudentByResidence />
-          </Stack>
-        </Grid>
+        
       </Grid>
 
     </Box>
