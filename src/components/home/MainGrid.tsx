@@ -284,17 +284,17 @@ const geoUrl =
 
 const markers = [
   { name: "New York", coordinates: [-74.006, 40.7128], value: "72K" },
-  { name: "San Francisco", coordinates: [-122.4194, 37.7749], value: "39K" },
-  { name: "Sydney", coordinates: [151.2093, -33.8688], value: "25K" },
-  { name: "Singapore", coordinates: [103.8198, 1.3521], value: "61K" },
+  { name: "Accra", coordinates: [-122.4194, 37.7749], value: "39K" },
+  { name: "Lome", coordinates: [151.2093, -33.8688], value: "25K" },
+  { name: "Abuja ", coordinates: [103.8198, 1.3521], value: "61K" },
 ];
 
 export const SalesByLocation = () => {
   const salesData = [
     { city: 'New York', value: 72 },
-    { city: 'San Francisco', value: 39 },
-    { city: 'Sydney', value: 25 },
-    { city: 'Singapore', value: 61 },
+    { city: 'Accra', value: 39 },
+    { city: 'Lome', value: 25 },
+    { city: 'Abuja', value: 61 },
   ];
 
   return (

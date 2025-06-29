@@ -11,22 +11,38 @@ import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
 import AnalyticsRoundedIcon from '@mui/icons-material/AnalyticsRounded';
 import PeopleRoundedIcon from '@mui/icons-material/PeopleRounded';
 import AssignmentRoundedIcon from '@mui/icons-material/AssignmentRounded';
+import Inventory2RoundedIcon from '@mui/icons-material/Inventory2Rounded';
+import CategoryRoundedIcon from '@mui/icons-material/CategoryRounded';
+import ShoppingCartRoundedIcon from '@mui/icons-material/ShoppingCartRounded';
+import LocalShippingRoundedIcon from '@mui/icons-material/LocalShippingRounded';
+import PaymentsRoundedIcon from '@mui/icons-material/PaymentsRounded';
 import SettingsRoundedIcon from '@mui/icons-material/SettingsRounded';
-import InfoRoundedIcon from '@mui/icons-material/InfoRounded';
-import HelpRoundedIcon from '@mui/icons-material/HelpRounded';
 import AutoGraphIcon from '@mui/icons-material/AutoGraph';
 
-const mainListItems1 = [
-  { text: 'Home', icon: <HomeRoundedIcon />, path: '/' },
-  { text: 'Students', icon: <AnalyticsRoundedIcon />, path: '/students' },
-  { text: 'Teachers', icon: <PeopleRoundedIcon />, path: '/teachers' },
-  { text: 'Grade Book', icon: <AssignmentRoundedIcon />, path: '/exams-report' },
-  // { text: 'Student Promotion', icon: <AssignmentRoundedIcon />, path: '/studentPromotion' },
-  { text: 'Attendance Report', icon: <AssignmentRoundedIcon />, path: '/attendance/students/report' },
-  { text: 'School Fees', icon: <AutoGraphIcon />, path: '/school-fees' },
-];
 
 const mainListItems = [
+  { text: 'Home', icon: <HomeRoundedIcon />, path: '/' },
+
+  // 📦 Products
+  { text: 'Products', icon: <Inventory2RoundedIcon />, path: '/products' },
+
+  // 🏷 Categories
+  { text: 'Categories', icon: <CategoryRoundedIcon />, path: '/categories' },
+
+  // 🛒 Orders
+  { text: 'Orders', icon: <ShoppingCartRoundedIcon />, path: '/orders' },
+
+  // 🚚 Deliveries
+  { text: 'Deliveries', icon: <LocalShippingRoundedIcon />, path: '/deliveries' },
+
+  // 💳 Payments
+  { text: 'Payments', icon: <PaymentsRoundedIcon />, path: '/payments' },
+
+  // ⚙️ Settings
+  { text: 'Settings', icon: <SettingsRoundedIcon />, path: '/settings' },
+];
+
+const mainListItems1 = [
   { text: 'Home', icon: <HomeRoundedIcon />, path: '/' },
   { text: 'People', icon: <AnalyticsRoundedIcon />, path: '/people' },
   { text: 'Academics', icon: <AnalyticsRoundedIcon />, path: '/academics' },
