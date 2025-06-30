@@ -19,14 +19,14 @@ const LockScreen: React.FC<LockScreenProps> = ({ onUnlock }) => {
   const [pin, setPin] = useState(['', '', '', '']);
   const [pinError, setPinError] = useState(false);
 
-  React.useEffect(()=>{
-      const fetchSchName = async () =>{
-        const {data} = await axiosInstance.get("/api/system-settings/");
-        setSchool_name(data[0].school_name);
-      } 
-      fetchSchName();
-    
-  },[])
+  React.useEffect(() => {
+    const fetchSchName = async () => {
+      const { data } = await axiosInstance.get("/api/system-settings/");
+      setSchool_name(data[0].school_name);
+    }
+    fetchSchName();
+
+  }, [])
   const navigate = useNavigate();
 
   const correctPin = "2021";
@@ -74,27 +74,27 @@ const LockScreen: React.FC<LockScreenProps> = ({ onUnlock }) => {
       alignItems="center"
       textAlign="center"
       // marginTop="4rem"
-      sx={{backgroundSize: "cover", // or 'contain', 'auto'
+      sx={{
+        backgroundSize: "cover", // or 'contain', 'auto'
         backgroundPosition: "center",
         backgroundRepeat: "no-repeat",
         minHeight: "100vh",
         backgroundImage: `url('/images/formbg3.jpg')`,
         backgroundPositionY: 'fixed',
         backgroundPositionX: 'fixed',
-        top: 0, 
+        top: 0,
         left: 0
       }}
-      
+
     >
       <Toast ref={toast} />
-      <Box sx={{ display: "flex", flexDirection: "column-reverse", justifyContent: "center", alignItems: "center" // Use a relative path or full URL
-     }}
+      <Box sx={{
+        display: "flex", flexDirection: "column-reverse", justifyContent: "center", alignItems: "center" // Use a relative path or full URL
+      }}
 
       >
-        <Typography variant="h6" mb={1}>
-          {school_name}
-        </Typography>
-        <img src="images/logo.png" width={40} alt="Logo" />
+        
+        <img src="images/logo.png" width={300} alt="Logo" />
       </Box>
       <Box
         padding="50px"
@@ -109,36 +109,36 @@ const LockScreen: React.FC<LockScreenProps> = ({ onUnlock }) => {
           {localStorage.getItem("username")?.toUpperCase()}
         </Typography>
         <Typography variant="subtitle1" color="text.secondary">
-          {localStorage.getItem("user_role")?.toUpperCase()==="ADMIN" ? "Administrator": ""}
-            {localStorage.getItem("user_role")?.toUpperCase()==="PARENT" ? "Parent": ""}
-            {localStorage.getItem("user_role")?.toUpperCase()==="STUDENT" ? "Student": ""}
-            {localStorage.getItem("user_role")?.toUpperCase()==="TEACHER" ? "Teacher": ""}
+          {localStorage.getItem("user_role")?.toUpperCase() === "ADMIN" ? "Administrator" : ""}
+          {localStorage.getItem("user_role")?.toUpperCase() === "PARENT" ? "Parent" : ""}
+          {localStorage.getItem("user_role")?.toUpperCase() === "STUDENT" ? "Student" : ""}
+          {localStorage.getItem("user_role")?.toUpperCase() === "TEACHER" ? "Teacher" : ""}
         </Typography>
         <Typography mt={2} mb={3} color="text.secondary">
           Welcome back. Provide your PIN to continue.
         </Typography>
-      <MantineProvider>
+        <MantineProvider>
 
-        
-      </MantineProvider>
-      <div style={{ display: "flex", justifyContent: "center", gap: "1rem" }}>
-        {pin.map((digit: any, index:any) => (
-          <InputText
-            key={index}
-            ref={(el:any) => (inputRefs.current[index] = el)}
-            value={digit}
-            onChange={(e) => handlePinChange(e.target.value, index)}
-            maxLength={1}
-            className={pinError ? "p-invalid" : ""}
-            style={{
-              width: "3rem",
-              height: "3.5rem",
-              fontSize: "1.5rem",
-              textAlign: "center",
-            }}
-          />
-        ))}
-      </div>
+
+        </MantineProvider>
+        <div style={{ display: "flex", justifyContent: "center", gap: "1rem" }}>
+          {pin.map((digit: any, index: any) => (
+            <InputText
+              key={index}
+              ref={(el: any) => (inputRefs.current[index] = el)}
+              value={digit}
+              onChange={(e) => handlePinChange(e.target.value, index)}
+              maxLength={1}
+              className={pinError ? "p-invalid" : ""}
+              style={{
+                width: "3rem",
+                height: "3.5rem",
+                fontSize: "1.5rem",
+                textAlign: "center",
+              }}
+            />
+          ))}
+        </div>
 
         {pinError && (
           <Typography color="error" mt={1}>
@@ -151,7 +151,7 @@ const LockScreen: React.FC<LockScreenProps> = ({ onUnlock }) => {
             Forgot PIN
           </a>
         </Typography>
-        <Typography mt={1} color="text.secondary" onClick={()=>{localStorage.removeItem("access_token");localStorage.removeItem("isLocked") ;navigate('/')}}>
+        <Typography mt={1} color="text.secondary" onClick={() => { localStorage.removeItem("access_token"); localStorage.removeItem("isLocked"); navigate('/') }}>
           <a href="" style={{ textDecoration: "none" }}>
             Log out instead
           </a>

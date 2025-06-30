@@ -48,6 +48,12 @@ import 'primeicons/primeicons.css';                               // ✅ icons
 import 'primeflex/primeflex.css';   
 import axiosInstance from './utils/axiosInstance'
 import { AdminUserProfilePage } from "./components/profile/UserProfile";
+import Product from "./components/products/Product";
+import Category from "./components/categories/Category";
+import Orders from "./components/orders/Orders";
+import Deliveries from "./components/deliveries/Deliveries";
+import Payments from "./components/payments/Payments";
+import Settings from "./components/settings/Settings";
 
 const App: React.FC = (props: { disableCustomTheme?: boolean }) => {
 
@@ -309,7 +315,7 @@ const App: React.FC = (props: { disableCustomTheme?: boolean }) => {
             >
               {!isAuthPage &&
                    (
-                    <Header SystemSettingData = {systemSettingsData} academicSettingsData = {AcademicSessionTermSettingsData} academicSessionSettingsData={AcademicSessionSettingsData} />
+                    <Header />
                   )}
                 <Routes>
                   <Route path='/auth/login' element = {<LoginPage />} />
@@ -317,6 +323,12 @@ const App: React.FC = (props: { disableCustomTheme?: boolean }) => {
                   <Route element={<ProtectedRoute />}>
                       <Route path='/' element = {<MainGrid  />} />
                       <Route path="/my-profile" element={<AdminUserProfilePage />} />
+                      <Route path="/products" element={<Product />} />
+                      <Route path="/categories" element={<Category />} />
+                      <Route path="/orders" element={<Orders />} />
+                      <Route path="/deliveries" element={<Deliveries />} />
+                      <Route path="/payments" element={<Payments />} />
+                      <Route path="/settings" element={<Settings />} />
                   </Route>
                 </Routes>
             </Stack>
