@@ -15,6 +15,7 @@ import CategoryDialog from './CategoryDialog'; // Import the new dialog componen
 import type { Category } from '../../types/index'; // Import the Category interface
 import axios from 'axios'; // Import Axios for API calls
 import axiosInstance from '../../utils/axiosInstance';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 const Category: React.FC = () => {
   const [categories, setCategories] = useState<Category[]>([]);
@@ -23,6 +24,7 @@ const Category: React.FC = () => {
   const [displayDialog, setDisplayDialog] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const [categoryDialogData, setCategoryDialogData] = useState<Partial<Category>>({});
+  const isSmallScreen = useMediaQuery("(max-width: 1045px)");
 
   const dt = useRef<DataTable<Category[]>>(null);
   const toast = useRef<Toast>(null);
@@ -223,7 +225,7 @@ const Category: React.FC = () => {
   }
 
   return (
-    <div style={{width: 'calc(100vw)', padding:'4px'}}>
+    <div style={{width: isSmallScreen ? '100%' : 'calc(100vw - 340px)', padding:'4px'}}>
       <Toast ref={toast} />
       <ConfirmDialog />
 

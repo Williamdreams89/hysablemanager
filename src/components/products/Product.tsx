@@ -4,7 +4,7 @@ import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
 import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
-import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog"; // Corrected import case
+import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
 import { Toolbar } from "primereact/toolbar";
 import { ProgressSpinner } from "primereact/progressspinner";
 import { Toast } from 'primereact/toast';
@@ -12,24 +12,51 @@ import { Menu } from 'primereact/menu';
 import { Card } from 'primereact/card';
 import { Rating } from 'primereact/rating';
 import { Tag } from 'primereact/tag';
-import {useMediaQuery}  from "@mui/material";
+import { useMediaQuery } from "@mui/material";
 import ProductDialog from './ProductDialog';
 import type { Product, Category } from '../../types';
-import axiosInstance from '../../utils/axiosInstance'; 
+import axiosInstance from '../../utils/axiosInstance';
 
 interface ProductDialogData extends Partial<Product> {
   newImageFile?: File | null;
 }
 
+// Separate memoized component for row actions
+const RowActions: React.FC<{
+  product: Product;
+  onEdit: (p: Product) => void;
+  onDelete: (id: string) => void;
+}> = ({ product, onEdit, onDelete }) => {
+  const menu = useRef<Menu>(null);
+
+  const items = [
+    { label: "Edit", icon: "pi pi-pencil", command: () => onEdit(product) },
+    { label: "Delete", icon: "pi pi-trash", command: () => onDelete(product.id) },
+  ];
+
+  return (
+    <>
+      <Button
+        icon="pi pi-ellipsis-v"
+        className="p-button-text p-button-secondary p-button-rounded"
+        onClick={(e) => menu.current?.toggle(e)}
+        aria-controls={`overlay_menu_${product.id}`}
+        aria-haspopup
+      />
+      <Menu model={items} popup ref={menu} id={`overlay_menu_${product.id}`} />
+    </>
+  );
+};
+
 const Product: React.FC = () => {
-  const isSmallScreen = useMediaQuery('(max-width:1045px)')
+  const isSmallScreen = useMediaQuery('(max-width:1045px)');
   const [products, setProducts] = useState<Product[]>([]);
   const [globalFilter, setGlobalFilter] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const [displayDialog, setDisplayDialog] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
-  const [productDialogData, setProductDialogData] = useState<ProductDialogData>({ newImageFile: null }); 
-  
+  const [productDialogData, setProductDialogData] = useState<ProductDialogData>({ newImageFile: null });
+
   const [categoryOptions, setCategoryOptions] = useState<{ label: string; value: string }[]>([]);
   const statusOptions: { label: string; value: 'In Stock' | 'Out of Stock' | 'Low Stock' }[] = [
     { label: 'In Stock', value: 'In Stock' },
@@ -50,7 +77,7 @@ const Product: React.FC = () => {
   const fetchProducts = async () => {
     setLoading(true);
     try {
-      const response = await axiosInstance.get<Product[]>('/products/');
+      const response = await axiosInstance.get<Product[]>('store/products/');
       setProducts(response.data);
     } catch (error) {
       console.error("Failed to fetch products:", error);
@@ -62,10 +89,10 @@ const Product: React.FC = () => {
 
   const fetchCategoryOptions = async () => {
     try {
-      const response = await axiosInstance.get<Category[]>('/categories/');
+      const response = await axiosInstance.get<Category[]>('store/category/');
       const transformedCategories = response.data.map(cat => ({
         label: cat.name,
-        value: cat.id // Assuming your product category field stores the category ID
+        value: cat.id
       }));
       setCategoryOptions(transformedCategories);
     } catch (error) {
@@ -86,7 +113,7 @@ const Product: React.FC = () => {
     if (data.newImageFile) {
       formData.append('image', data.newImageFile);
     } else if (isEdit && data.image === '') {
-        formData.append('image', ''); 
+      formData.append('image', '');
     }
     return formData;
   };
@@ -94,57 +121,57 @@ const Product: React.FC = () => {
   const handleAddProduct = async () => {
     setLoading(true);
     if (!productDialogData.name || productDialogData.price === undefined || productDialogData.stock === undefined) {
-        toast.current?.show({ severity: 'warn', summary: 'Validation Error', detail: 'Name, Price, and Stock are required.', life: 4000 });
-        setLoading(false);
-        return;
+      toast.current?.show({ severity: 'warn', summary: 'Validation Error', detail: 'Name, Price, and Stock are required.', life: 4000 });
+      setLoading(false);
+      return;
     }
 
     try {
-        const formData = buildFormData(productDialogData);
-        const response = await axiosInstance.post<Product>('/products/', formData, { headers: { 'Content-Type': 'multipart/form-data' } });
-        setProducts(prev => [...prev, response.data]);
-        setDisplayDialog(false);
-        toast.current?.show({ severity: 'success', summary: 'Success', detail: 'Product Added Successfully!', life: 3000 });
+      const formData = buildFormData(productDialogData);
+      const response = await axiosInstance.post<Product>('/products/', formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+      setProducts(prev => [...prev, response.data]);
+      setDisplayDialog(false);
+      toast.current?.show({ severity: 'success', summary: 'Success', detail: 'Product Added Successfully!', life: 3000 });
     } catch (error: any) {
-        console.error("Error adding product:", error.response?.data || error);
-        const errorMessage = error.response?.data?.message 
-                           || JSON.stringify(error.response?.data) 
-                           || error.message 
-                           || "Failed to add product. Please try again.";
-        toast.current?.show({ severity: 'error', summary: 'Error', detail: errorMessage, life: 5000 });
+      console.error("Error adding product:", error.response?.data || error);
+      const errorMessage = error.response?.data?.message
+        || JSON.stringify(error.response?.data)
+        || error.message
+        || "Failed to add product. Please try again.";
+      toast.current?.show({ severity: 'error', summary: 'Error', detail: errorMessage, life: 5000 });
     } finally {
-        setLoading(false);
+      setLoading(false);
     }
   };
 
   const handleEditProduct = async () => {
     setLoading(true);
     if (!productDialogData.id) {
-        toast.current?.show({ severity: 'error', summary: 'Error', detail: 'Product ID is missing for update.', life: 3000 });
-        setLoading(false);
-        return;
+      toast.current?.show({ severity: 'error', summary: 'Error', detail: 'Product ID is missing for update.', life: 3000 });
+      setLoading(false);
+      return;
     }
     if (!productDialogData.name || productDialogData.price === undefined || productDialogData.stock === undefined) {
-        toast.current?.show({ severity: 'warn', summary: 'Validation Error', detail: 'Name, Price, and Stock are required.', life: 4000 });
-        setLoading(false);
-        return;
+      toast.current?.show({ severity: 'warn', summary: 'Validation Error', detail: 'Name, Price, and Stock are required.', life: 4000 });
+      setLoading(false);
+      return;
     }
-    
+
     try {
-        const formData = buildFormData(productDialogData);
-        const response = await axiosInstance.patch<Product>(`/products/${productDialogData.id}/`, formData, { headers: { 'Content-Type': 'multipart/form-data' } });
-        setProducts(prev => prev.map(p => p.id === response.data.id ? response.data : p));
-        setDisplayDialog(false);
-        toast.current?.show({ severity: 'success', summary: 'Success', detail: 'Product Updated Successfully!', life: 3000 });
+      const formData = buildFormData(productDialogData);
+      const response = await axiosInstance.patch<Product>(`/products/${productDialogData.id}/`, formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+      setProducts(prev => prev.map(p => p.id === response.data.id ? response.data : p));
+      setDisplayDialog(false);
+      toast.current?.show({ severity: 'success', summary: 'Success', detail: 'Product Updated Successfully!', life: 3000 });
     } catch (error: any) {
-        console.error("Error updating product:", error.response?.data || error);
-        const errorMessage = error.response?.data?.message 
-                           || JSON.stringify(error.response?.data)
-                           || error.message 
-                           || "Failed to update product. Please try again.";
-        toast.current?.show({ severity: 'error', summary: 'Error', detail: errorMessage, life: 5000 });
+      console.error("Error updating product:", error.response?.data || error);
+      const errorMessage = error.response?.data?.message
+        || JSON.stringify(error.response?.data)
+        || error.message
+        || "Failed to update product. Please try again.";
+      toast.current?.show({ severity: 'error', summary: 'Error', detail: errorMessage, life: 5000 });
     } finally {
-        setLoading(false);
+      setLoading(false);
     }
   };
 
@@ -189,7 +216,7 @@ const Product: React.FC = () => {
   };
 
   const imageBodyTemplate = (rowData: Product) => {
-    const imageUrl = rowData.image || defaultPlaceholderImage;
+    const imageUrl = rowData.imgb || "/images/publish.png";
     return (
       <img
         src={imageUrl}
@@ -214,33 +241,10 @@ const Product: React.FC = () => {
     return <Tag value={rowData.status} severity={severity}></Tag>;
   };
 
-  const actionBody = (rowData: Product) => {
-    const rowMenuRef = useRef<Menu>(null);
-
-    const items = [
-      { label: "Edit", icon: "pi pi-pencil", command: () => openEditDialog(rowData) },
-      { label: "Delete", icon: "pi pi-trash", command: () => handleDeleteProduct(rowData.id) },
-    ];
-
-    return (
-      <>
-        <Button
-          icon="pi pi-ellipsis-v"
-          className="p-button-text p-button-secondary p-button-rounded"
-          onClick={(event) => { rowMenuRef.current?.toggle(event); }}
-          aria-controls={`overlay_menu_${rowData.id}`}
-          aria-haspopup
-        />
-        <Menu model={items} popup ref={rowMenuRef} id={`overlay_menu_${rowData.id}`} />
-      </>
-    );
-  };
-
   const header = (
     <div className="flex flex-wrap justify-content-between align-items-center gap-2">
       <h5 className="m-0">Manage Products</h5>
       <span className="w-full sm:w-auto" style={{}}>
-        {/* <i className="pi pi-search"  style={{marginLeft:'10rem'}} /> */}
         <InputText
           type="search"
           onInput={(e) => setGlobalFilter((e.target as HTMLInputElement).value)}
@@ -274,12 +278,8 @@ const Product: React.FC = () => {
     );
   }
 
-  
-
   return (
-    // The Card component naturally constrains its width.
-    // If you have a layout wrapping this Card, ensure it does not allow horizontal overflow.
-    <Card style={{width:!isSmallScreen?'calc(100vw - 260px)': '100vw', padding:'1rem'}}>
+    <Card style={{ width: '100%', padding: '1rem' }}>
       <Toast ref={toast} />
       <ConfirmDialog />
 
@@ -290,33 +290,24 @@ const Product: React.FC = () => {
         paginator
         rows={10}
         rowsPerPageOptions={[10, 20, 50]}
-        globalFilter={globalFilter}
+                globalFilter={globalFilter}
         header={header}
         dataKey="id"
-        // *** CRUCIAL CHANGE FOR HORIZONTAL SCROLL ***
-        responsiveLayout="scroll" // Changed from "stack" to "scroll"
-        // The breakpoint is less critical with "scroll" but still good practice
-        breakpoint="991px" // This breakpoint is now mostly for general CSS adjustments if any
-        className="datatable-scrollable" // Add a distinct class for potential custom CSS
+        responsiveLayout="scroll"
+        breakpoint="991px"
+        className="datatable-scrollable"
         emptyMessage="No products found."
-        // Optional: If you want *vertical* scrolling within the table body, and a fixed header:
-        // scrollable={true}
-        // scrollHeight="400px" // Or "flex" to fill available height
       >
-        {/*
-          When using responsiveLayout="scroll", it's important to give columns
-          appropriate minWidths so they don't shrink too much.
-          Remove 'hidden md:table-cell' classes if you want all columns always visible
-          and relying purely on horizontal scroll.
-        */}
         <Column header="Image" body={imageBodyTemplate} style={{ width: '8rem', textAlign: 'center' }} />
         <Column field="name" header="Name" sortable style={{ minWidth: '10rem' }} />
-        <Column field="category" header="Category" sortable style={{ minWidth: '10rem' }} /> {/* Made always visible */}
+        <Column field="category" header="Category" sortable style={{ minWidth: '10rem' }} />
         <Column field="price" header="Price" body={priceBodyTemplate} sortable style={{ minWidth: '8rem' }} />
         <Column field="stock" header="Stock" sortable style={{ minWidth: '8rem' }} />
-        <Column field="status" header="Status" body={statusBodyTemplate} sortable style={{ minWidth: '10rem' }} /> {/* Made always visible */}
-        <Column field="rating" header="Rating" body={ratingBodyTemplate} sortable style={{ minWidth: '10rem' }} /> {/* Made always visible */}
-        <Column body={actionBody} header="Actions" exportable={false} style={{ minWidth: '8rem' }} />
+        <Column field="status" header="Status" body={statusBodyTemplate} sortable style={{ minWidth: '10rem' }} />
+        <Column field="rating" header="Rating" body={ratingBodyTemplate} sortable style={{ minWidth: '10rem' }} />
+        <Column body={(rowData) => (
+          <RowActions product={rowData} onEdit={openEditDialog} onDelete={handleDeleteProduct} />
+        )} header="Actions" exportable={false} style={{ minWidth: '8rem' }} />
       </DataTable>
 
       <ProductDialog
@@ -334,3 +325,4 @@ const Product: React.FC = () => {
 };
 
 export default Product;
+

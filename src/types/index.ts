@@ -11,6 +11,8 @@ export interface Product {
   description?: string;
   rating?: number; // Example: 0-5 star rating
   // Add any other relevant product fields as needed
+  imgb?: string;
+  imgf?: string;
 }
 
 // You can add other interfaces here as well, e.g., for Category, Order, etc.
